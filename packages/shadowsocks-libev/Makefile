@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-libev
-PKG_VERSION:=1.6.4
+PKG_VERSION:=2.1.4
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_URL:=https://github.com/madeye/shadowsocks-libev/archive
@@ -82,7 +82,7 @@ Package/shadowsocks-libev-polarssl/install=$(Package/shadowsocks-libev/install)
 
 define Package/shadowsocks-libev-server/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-server $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-server $(1)/usr/sbin
 endef
 
 Package/shadowsocks-libev-server-polarssl/install=$(Package/shadowsocks-libev-server/install)
