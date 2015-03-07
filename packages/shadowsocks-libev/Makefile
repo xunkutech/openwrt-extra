@@ -81,7 +81,7 @@ endef
 Package/shadowsocks-libev-polarssl/install=$(Package/shadowsocks-libev/install)
 
 define Package/shadowsocks-libev-server/install
-	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-server $(1)/usr/sbin
 endef
 
