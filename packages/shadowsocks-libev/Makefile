@@ -4,7 +4,7 @@ PKG_NAME:=shadowsocks-libev
 PKG_VERSION:=2.3.0
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
-PKG_SOURCE_URL:=https://github.com/madeye/shadowsocks-libev/archive
+PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-libev/archive
 PKG_SOURCE:=v$(PKG_VERSION).tar.gz
 PKG_MAINTAINER:=Max Lv <max.c.lv@gmail.com>
 
@@ -28,39 +28,29 @@ define Package/shadowsocks-libev
   $(call Package/shadowsocks-libev/Default)
   TITLE+= (OpenSSL)
   VARIANT:=openssl
-  DEPENDS:=+libopenssl
+  DEPENDS:=+libopenssl +libpthread
 endef
 
 define Package/shadowsocks-libev-polarssl
   $(call Package/shadowsocks-libev/Default)
   TITLE+= (PolarSSL)
   VARIANT:=polarssl
-  DEPENDS:=+libpolarssl
-endef
-
-define Package/shadowsocks-libev-server
-  $(call Package/shadowsocks-libev/Default)
-  TITLE+= (OpenSSL)
-  VARIANT:=openssl
-  DEPENDS:=+libopenssl +libpthread
-endef
-
-define Package/shadowsocks-libev-server-polarssl
-  $(call Package/shadowsocks-libev/Default)
-  TITLE+= (PolarSSL)
-  VARIANT:=polarssl
   DEPENDS:=+libpolarssl +libpthread
 endef
 
+define Package/shadowsocks-libev-mbedtls
+  $(call Package/shadowsocks-libev/Default)
+  TITLE+= (mbedTLS)
+  VARIANT:=mbedtls
+  DEPENDS:=+libmbedtls +libpthread
+endef
+
 define Package/shadowsocks-libev/description
-Shadowsocks-libev is a lightweight secured scoks5 proxy for embedded devices and low end boxes.
+Shadowsocks-libev is a lightweight secured socks5 proxy for embedded devices and low end boxes.
 endef
 
 Package/shadowsocks-libev-polarssl/description=$(Package/shadowsocks-libev/description)
-
-Package/shadowsocks-libev-server/description=$(Package/shadowsocks-libev/description)
-
-Package/shadowsocks-libev-server-polarssl/description=$(Package/shadowsocks-libev/description)
+Package/shadowsocks-libev-mbedtls/description=$(Package/shadowsocks-libev/description)
 
 define Package/shadowsocks-libev/conffiles
 /etc/shadowsocks.json
@@ -70,24 +60,23 @@ ifeq ($(BUILD_VARIANT),polarssl)
 	CONFIGURE_ARGS += --with-crypto-library=polarssl
 endif
 
+ifeq ($(BUILD_VARIANT),mbedtls)
+	CONFIGURE_ARGS += --with-crypto-library=mbedtls
+endif
+
 define Package/shadowsocks-libev/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_CONF) ./files/shadowsocks.json $(1)/etc
 	$(INSTALL_BIN) ./files/shadowsocks.init $(1)/etc/init.d/shadowsocks
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-{local,redir,tunnel} $(1)/usr/bin
-endef
-
-Package/shadowsocks-libev-polarssl/install=$(Package/shadowsocks-libev/install)
-
-define Package/shadowsocks-libev-server/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-server $(1)/usr/sbin
 endef
 
-Package/shadowsocks-libev-server-polarssl/install=$(Package/shadowsocks-libev-server/install)
+Package/shadowsocks-libev-polarssl/install=$(Package/shadowsocks-libev/install)
+Package/shadowsocks-libev-mbedtls/install=$(Package/shadowsocks-libev/install)
 
 $(eval $(call BuildPackage,shadowsocks-libev))
 $(eval $(call BuildPackage,shadowsocks-libev-polarssl))
-$(eval $(call BuildPackage,shadowsocks-libev-server))
-$(eval $(call BuildPackage,shadowsocks-libev-server-polarssl))
+$(eval $(call BuildPackage,shadowsocks-libev-mbedtls))
